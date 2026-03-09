@@ -7,10 +7,8 @@ static Main _main;
 
 extern "C" void app_main(void)
 {
-    ESP_LOGI(LOG_TAG, "Creating default event loop");
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
 
-    ESP_LOGI(LOG_TAG, "Initialising NVS");
+    ESP_ERROR_CHECK(esp_event_loop_create_default());
     ESP_ERROR_CHECK(nvs_flash_init());
 
 
@@ -23,6 +21,7 @@ extern "C" void app_main(void)
     
         
     while(1){
+    ESP_LOGI(LOG_TAG,"0x%s",_main.Wifi.get_mac());
     //ESP_LOGI(LOG_TAG, "ESP CLASS");
     ESP_ERROR_CHECK(_main.led.set(true));
     ESP_LOGI("TRANG THAI DEN ","INPUT LA %d", _main.button.state());

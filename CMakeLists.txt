@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(EXTRA_COMPONENT_DIRS
     ${CMAKE_SOURCE_DIR}/core
+    ${CMAKE_SOURCE_DIR}/application/WiFi
     ${CMAKE_SOURCE_DIR}/application/Gpio
 )
 
