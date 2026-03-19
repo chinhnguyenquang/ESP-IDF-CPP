@@ -5,29 +5,58 @@
 
 static Main _main;
 
+
+
+esp_err_t initialize_system(void)
+{
+
+    esp_err_t status{_main.Wifi.init()};
+    status |= _main.led.init();
+    
+    
+    return status;
+
+} 
+
+
 extern "C" void app_main(void)
 {
 
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
-    ESP_ERROR_CHECK(nvs_flash_init());
-
-
-    ESP_LOGI(LOG_TAG,"BAT DAU NEEEEEEEE");
-    esp_err_t status{ESP_OK};
-    status |= _main.led.init();
-    status |= _main.button.init();
-
-    ESP_ERROR_CHECK(status);
     
-        
+    esp_err_t ret =nvs_flash_init();
+
+    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+        /* NVS partition was truncated
+         * and needs to be erased */
+        ESP_ERROR_CHECK(nvs_flash_erase());
+
+        /* Retry nvs_flash_init */
+        ESP_ERROR_CHECK(nvs_flash_init());
+    }
+    ESP_ERROR_CHECK(esp_event_loop_create_default());
+
+
+    if (ESP_OK != initialize_system())
+    {
+        ESP_LOGE(LOG_TAG, "System initialization failed");
+        esp_restart();
+    }
+    bool status_led=true;
+    _main.sntp.init();
+
+
+
     while(1){
-    ESP_LOGI(LOG_TAG,"0x%s",_main.Wifi.get_mac());
-    //ESP_LOGI(LOG_TAG, "ESP CLASS");
-    ESP_ERROR_CHECK(_main.led.set(true));
-    ESP_LOGI("TRANG THAI DEN ","INPUT LA %d", _main.button.state());
-    vTaskDelay(pdMS_TO_TICKS(1000));
-    ESP_ERROR_CHECK(_main.led.set(false));
-    vTaskDelay(pdMS_TO_TICKS(1000));
+        //ESP_LOGI(LOG_TAG,"MA MAC CUA ESP %s",_main.Wifi.get_mac());
+       
+        if(_main.Wifi.get_state() == WIFI::Wifi_pro::state_e::CONNECTED){
+            ESP_LOGI(LOG_TAG,"OKKKKKKKKKKKK");
+            status_led = !status_led;
+            _main.led.set(status_led);
+            // ESP_LOGI("main", "Time is %s", _main.sntp.ascii_time_now());
+
+        }
+        vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
 

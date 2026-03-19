@@ -5,12 +5,18 @@
 #include "nvs_flash.h"
 
 #include "Gpio.h"
-#include "Wifi.h"
-
+#include "Wifi_pro.h"
+#include "SntpTime.h"
 
 class Main final{
     public: 
+     Main(void)
+        : sntp { SNTP::Sntp::get_instance() }
+        {
+
+        }
         Gpio::GpioOutput led{GPIO_NUM_2};
         Gpio::GpioInput button{GPIO_NUM_13,true,false,GPIO_INTR_DISABLE};
-        WIFI::Wifi Wifi;
+        WIFI::Wifi_pro Wifi;
+        SNTP::Sntp& sntp;
 };
