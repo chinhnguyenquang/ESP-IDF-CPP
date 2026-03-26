@@ -30,6 +30,7 @@ class Wifi_pro
     static uint8_t wifipro_retries;
     constexpr static const char *pop{"abcd1234"};
 
+
 public:
 
     enum class state_e

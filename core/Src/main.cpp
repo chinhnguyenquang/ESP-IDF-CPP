@@ -11,9 +11,38 @@ esp_err_t initialize_system(void)
 {
 
     esp_err_t status{_main.Wifi.init()};
+
     status |= _main.led.init();
     
+    status |= _main.nvs_cfg.open();
+
+    constexpr static const char*    key{"ctr"};
     
+    size_t  ctr{0};
+
+    size_t len{1};
+    status |= _main.nvs_cfg.get_buf(key, &ctr, len);
+    ESP_LOGI("nvs_tag", "%s", esp_err_to_name(status));
+    if (ESP_OK == status)
+    {
+        ESP_LOGI("nvs_tag", "Counter: %u", ctr);
+
+        ++ctr;
+        ESP_LOGI("nvs_tag", "Setting key \"%s\" to %u", key, ctr);
+        status = _main.nvs_cfg.set_buffer(key, &ctr);
+        ESP_LOGI("nvs_tag", "%s", esp_err_to_name(status));
+    }
+    else{
+        ESP_LOGI("nvs_tag", "faileddddddddd:");
+        status = _main.nvs_cfg.set_buffer(key, &ctr);
+    }
+
+    _main.nvs_cfg.close();
+
+
+
+
+
     return status;
 
 } 
@@ -24,8 +53,7 @@ extern "C" void app_main(void)
 
     
     esp_err_t ret =nvs_flash_init();
-
-    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+        if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
         /* NVS partition was truncated
          * and needs to be erased */
         ESP_ERROR_CHECK(nvs_flash_erase());
@@ -39,7 +67,7 @@ extern "C" void app_main(void)
     if (ESP_OK != initialize_system())
     {
         ESP_LOGE(LOG_TAG, "System initialization failed");
-        esp_restart();
+        //esp_restart();
     }
     bool status_led=true;
     _main.sntp.init();

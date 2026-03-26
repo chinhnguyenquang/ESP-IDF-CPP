@@ -146,7 +146,7 @@ esp_err_t Wifi_pro::_init(void)
         
         // Config ble provision ......
         wifi_ble_config.scheme              = wifi_prov_scheme_ble;
-        wifi_ble_config.scheme_event_handler=WIFI_PROV_SCHEME_BLE_EVENT_HANDLER_FREE_BTDM;
+        wifi_ble_config.scheme_event_handler=WIFI_PROV_SCHEME_BLE_EVENT_HANDLER_FREE_BLE;
 
         status = wifi_prov_mgr_init(wifi_ble_config);
 
@@ -222,7 +222,6 @@ void Wifi_pro::wifi_event_handler(void* arg, esp_event_base_t event_base,
             }
             case(WIFI_EVENT_STA_DISCONNECTED):
             {
-                //10 la so lan retry
                 ESP_LOGI("WIFI", "Disconnected. Connecting to the AP again...");
                 esp_wifi_connect();
                 std::lock_guard<std::mutex>state_guard(state_mutx);
@@ -236,6 +235,10 @@ void Wifi_pro::wifi_event_handler(void* arg, esp_event_base_t event_base,
        }
     }
 }
+
+
+
+
 
 void Wifi_pro::ip_event_handler(void* arg, esp_event_base_t event_base,
                                 int32_t event_id, void* event_data)
