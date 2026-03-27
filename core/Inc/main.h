@@ -20,5 +20,5 @@ class Main final{
         Gpio::GpioInput button{GPIO_NUM_13,true,false,GPIO_INTR_DISABLE};
         WIFI::Wifi_pro Wifi;
         SNTP::Sntp& sntp;
-        Nvs32::Nvs nvs_cfg;  
+        NVS::Nvs nvs_cfg;  
 };
