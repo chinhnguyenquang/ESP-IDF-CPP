@@ -6,8 +6,7 @@
 static Main _main;
 
 
-char tmp[20]={0};
-size_t len=10;
+
 esp_err_t initialize_system(void)
 {
 
@@ -15,33 +14,6 @@ esp_err_t initialize_system(void)
 
     status |= _main.led.init();
     
-    status |= _main.nvs_cfg.init();
-
-    constexpr static const char*    key{"ctr"};
-    
-    uint16_t  ctr{0};
-    char ttt[20]="hellojnfg";
-    status |= _main.nvs_cfg.get(key, ctr);
-    //status |= _main.nvs_cfg.set_buffer("test", ttt, strlen(ttt));
-    _main.nvs_cfg.get_buffer("test", tmp, len);
-    ESP_LOGI("nvs_tag", "%s", esp_err_to_name(status));
-    if (ESP_OK == status)
-    {
-        ESP_LOGI("nvs_tag", "Counter: %u", ctr);
-
-        ++ctr;
-        ESP_LOGI("nvs_tag", "Setting key \"%s\" to %u", key, ctr);
-        status = _main.nvs_cfg.set(key, ctr);
-        ESP_LOGI("nvs_tag", "%s", esp_err_to_name(status));
-    }
-    else{
-        ESP_LOGI("nvs_tag", "faileddddddddd:");
-        status = _main.nvs_cfg.set(key, ctr);
-    }
-
-    _main.nvs_cfg.close();
-
-
 
 
 
@@ -73,12 +45,11 @@ extern "C" void app_main(void)
         esp_restart();
     }
     bool status_led=true;
-    //_main.sntp.init();
+    //_main.sntp.init(); chi khi co wifi, neu khong se bi treo o day doi wifi connect, nen de sau khi co wifi connect moi init sntp de tranh treo o day doi wifi connect
 
 
 
     while(1){
-        //ESP_LOGI(LOG_TAG,"MA MAC CUA ESP %s",_main.Wifi.get_mac());
        
         if(_main.Wifi.get_state() == WIFI::Wifi_pro::state_e::CONNECTED){
             ESP_LOGI(LOG_TAG,"OKKKKKKKKKKKK");
@@ -87,8 +58,7 @@ extern "C" void app_main(void)
             // ESP_LOGI("main", "Time is %s", _main.sntp.ascii_time_now());
 
         }
-        ESP_LOGI(LOG_TAG,"NVSSS %s ......%zu", tmp, len);
-        printf("hellow rod\n");
+
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
