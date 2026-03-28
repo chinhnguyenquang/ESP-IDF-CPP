@@ -73,7 +73,7 @@ extern "C" void app_main(void)
         esp_restart();
     }
     bool status_led=true;
-    //_main.sntp.init();
+    _main.sntp.init();
 
 
 
