@@ -297,7 +297,7 @@ void Wifi_pro::pro_event_handler(void* arg, esp_event_base_t event_base,
                 ESP_LOGE("WIFI PRO", "Provisioning failed!\n\tReason : %s"
                          "\n\tPlease reset to factory and retry provisioning",
                          (*reason == WIFI_PROV_STA_AUTH_ERROR) ?
-                         "Wi-Fi station authentication failed" : "Wi-Fi access-point not found");
+                         "Wi-Fi station authentication failed" : "Wi-Fi ble not found");
 
                 wifipro_retries++;
                 //5 lan provision lai
