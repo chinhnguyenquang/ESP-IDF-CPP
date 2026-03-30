@@ -47,7 +47,6 @@ extern "C" void app_main(void)
     bool status_led=true;
     _main.sntp.init();// chi khi co wifi, neu khong se bi treo o day doi wifi connect, nen de sau khi co wifi connect moi init sntp de tranh treo o day doi wifi connect
     ESP_LOGI(LOG_TAG, "System initialization complete");
-    vTaskDelay(pdMS_TO_TICKS(30000));
     xTaskCreate(&ota_update_task, "ota_update_task", 4096, NULL, 5, NULL);
 
     while(1){

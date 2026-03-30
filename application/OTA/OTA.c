@@ -28,7 +28,7 @@
 #include <nvs_flash.h>
 //#include <driver/gpio.h>
 #include <esp_image_format.h>
-
+#include "esp_crt_bundle.h"
 #include "OTA.h"
 #include "Certificate.h"
 #define ARRAYSIZE(a) (sizeof(a) / sizeof(*(a)))
@@ -75,7 +75,7 @@ _versions_match(esp_app_desc_t const * const desc1, esp_app_desc_t const * const
 void
 ota_update_task(void * pvParameter)
 {
-    //ESP_LOGI(TAG, "Checking for OTA update (%s)", CONFIG_OTA_UPDATE_FIRMWARE_URL);
+    ESP_LOGI(TAG, "Checking for OTA update (%s)", "https://raw.githubusercontent.com/chinhnguyenquang/OTA_ESP/master/ota_1.bin");
 
     esp_partition_t const * const configured_part = esp_ota_get_boot_partition();
     esp_partition_t const * const running_part = esp_ota_get_running_partition();
@@ -92,10 +92,9 @@ ota_update_task(void * pvParameter)
 
     esp_http_client_config_t config = {
         .url = "https://raw.githubusercontent.com/chinhnguyenquang/OTA_ESP/master/ota_1.bin",
-        .cert_pem = (char *)rootCACertificate,
+        .crt_bundle_attach = esp_crt_bundle_attach,
         .timeout_ms = 5000,
-        .keep_alive_enable = true,
-        .skip_cert_common_name_check = true 
+        .keep_alive_enable = true
     };
     esp_https_ota_config_t ota_config = {
         .http_config = &config,
