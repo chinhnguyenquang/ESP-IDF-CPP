@@ -45,7 +45,7 @@ extern "C" void app_main(void)
         esp_restart();
     }
     bool status_led=true;
-    //_main.sntp.init(); chi khi co wifi, neu khong se bi treo o day doi wifi connect, nen de sau khi co wifi connect moi init sntp de tranh treo o day doi wifi connect
+    _main.sntp.init(); 
 
 
 
