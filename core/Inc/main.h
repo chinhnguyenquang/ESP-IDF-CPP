@@ -8,7 +8,7 @@
 #include "Wifi_pro.h"
 #include "SntpTime.h"
 #include "Nvs32.h"
-#include "OTA.h"
+#include <OTA.h>
 
 
 class Main final{
@@ -22,6 +22,6 @@ class Main final{
         Gpio::GpioInput button{GPIO_NUM_13,true,false,GPIO_INTR_DISABLE};
         WIFI::Wifi_pro Wifi;
         SNTP::Sntp& sntp;
-        NVS::Nvs nvs_cfg;  
-
+        NVS::Nvs nvs_cfg;
+    
 };
