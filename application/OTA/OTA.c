@@ -44,15 +44,13 @@ static char const * const TAG = "ota_task";
 //extern uint8_t const server_cert_pem_end[] asm("_binary_ca_cert_pem_end");
 //static char ota_write_data[BUFFSIZE + 1] = { 0 };  // OTA data buffer ready to write to flash
 
-static void
-_http_cleanup(esp_https_ota_handle_t https_ota_handle)
+static void _http_cleanup(esp_https_ota_handle_t https_ota_handle)
 {
     esp_https_ota_abort(https_ota_handle);
     ESP_LOGE(TAG, "upgrade failed");
 }
 
-static void
-__attribute__((noreturn)) _delete_task()
+static void __attribute__((noreturn)) _delete_task()
 {
     ESP_LOGI(TAG, "Exiting task ..");
     (void)vTaskDelete(NULL);
@@ -62,8 +60,7 @@ __attribute__((noreturn)) _delete_task()
     }
 }
 
-static bool
-_versions_match(esp_app_desc_t const * const desc1, esp_app_desc_t const * const desc2)
+static bool _versions_match(esp_app_desc_t const * const desc1, esp_app_desc_t const * const desc2)
 {
     return
         strncmp(desc1->project_name, desc2->project_name, sizeof(desc1->project_name)) == 0 &&
@@ -71,6 +68,8 @@ _versions_match(esp_app_desc_t const * const desc1, esp_app_desc_t const * const
         strncmp(desc1->date, desc2->date, sizeof(desc1->date)) == 0 &&
         strncmp(desc1->time, desc2->time, sizeof(desc1->time)) == 0;
 }
+
+
 
 void
 ota_update_task(void * pvParameter)
