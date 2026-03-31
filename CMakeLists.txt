@@ -11,6 +11,7 @@ set(EXTRA_COMPONENT_DIRS
     ${CMAKE_SOURCE_DIR}/application/WiFi
     ${CMAKE_SOURCE_DIR}/application/Gpio
     ${CMAKE_SOURCE_DIR}/application/Nvs32
+    ${CMAKE_SOURCE_DIR}/application/OTA
 )
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)

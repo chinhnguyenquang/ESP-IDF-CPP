@@ -6,20 +6,19 @@
 static Main _main;
 
 
-
-esp_err_t initialize_system(void)
+static esp_err_t initialize_system(void)
 {
 
     esp_err_t status{_main.Wifi.init()};
 
     status |= _main.led.init();
     
-
-
-
     return status;
 
 } 
+
+
+
 
 
 extern "C" void app_main(void)
@@ -44,19 +43,21 @@ extern "C" void app_main(void)
         ESP_LOGE(LOG_TAG, "System initialization failed");
         esp_restart();
     }
-    bool status_led=true;
-    _main.sntp.init(); 
 
 
+    bool FirstBoot{false};
 
+    
     while(1){
        
-        if(_main.Wifi.get_state() == WIFI::Wifi_pro::state_e::CONNECTED){
-            ESP_LOGI(LOG_TAG,"OKKKKKKKKKKKK");
-            status_led = !status_led;
-            _main.led.set(status_led);
-            // ESP_LOGI("main", "Time is %s", _main.sntp.ascii_time_now());
+        if((_main.Wifi.get_state() == WIFI::Wifi_pro::state_e::CONNECTED)&&(!FirstBoot))
+        {
+            FirstBoot=true;
+            ESP_LOGI(LOG_TAG, "First boot after connecting to WiFi. Performing first-time setup tasks...");
 
+            _main.sntp.init();// chi khi co wifi, neu khong se bi treo o day doi wifi connect, nen de sau khi co wifi connect moi init sntp de tranh treo o day doi wifi connect
+
+            xTaskCreate(&ota_update_task, "ota_update_task", 4096, NULL, 5, NULL);
         }
 
         vTaskDelay(pdMS_TO_TICKS(1000));

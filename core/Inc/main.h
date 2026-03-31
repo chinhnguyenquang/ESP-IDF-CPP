@@ -8,6 +8,8 @@
 #include "Wifi_pro.h"
 #include "SntpTime.h"
 #include "Nvs32.h"
+#include "OTA.h"
+
 
 class Main final{
     public: 
@@ -21,4 +23,5 @@ class Main final{
         WIFI::Wifi_pro Wifi;
         SNTP::Sntp& sntp;
         NVS::Nvs nvs_cfg;  
+
 };
