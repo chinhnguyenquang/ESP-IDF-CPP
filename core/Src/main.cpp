@@ -109,17 +109,13 @@ extern "C" void app_main(void)
         ESP_LOGE(LOG_TAG, "System initialization failed");
         esp_restart();
     }
+    
 
-
-
+    memset(&_main.data_iotvision, 0, sizeof(_main.data_iotvision));
     _main.Wifi.setConnectedCallback(Event_Connected_Handler);
     xTaskCreatePinnedToCore(&Task_Get_HTTP_IotVision, "Task cap nhat thong tin tu IoTVision", 4096, NULL, 5, NULL,1);
     xTaskCreatePinnedToCore(&Task_Du_Lieu, "Task doc du lieu", 4096, NULL, 5, NULL,1);
-    _main.data_iotvision.K1 = 1;
-    _main.data_iotvision.K2 = 1;    
-    _main.data_iotvision.K3 = 1;
-    _main.data_iotvision.K4 = 1;
-    _main.data_iotvision.MODE = 0;
+
 
     _main.sntp.set_time_callback([](){
         ESP_LOGI(LOG_TAG, "SNTP time updated callback called");
@@ -127,8 +123,7 @@ extern "C" void app_main(void)
         ESP_LOGI(LOG_TAG, "Updated data_iotvision.Time to %s", _main.data_iotvision.Time);
     });
 
-    _main.data_iotvision.Temp = 23.3;
-    _main.data_iotvision.Humi = 82.4;
+
 
     while(1){
        
