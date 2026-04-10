@@ -96,16 +96,25 @@ private:
 
 public:
     // NGUOI DUNG TU CUSTOME ENDPOINT CO THE HOAC KHONG (data,len)
+    //custom endpoint cua config wifi_prov_mgr_config_t, khi co data gui den endpoint nay thi se goi callback nay, nguoi dung co the dat callback nay de xu ly data gui den endpoint nay
     using EndpointCallback = std::function<void(const uint8_t*, size_t)>;
+    using ConnectedCallback = std::function<void(void)>;
     void setEndpointCallback(EndpointCallback cb)
     {
         endpoint_cb = cb;
     }
+    void setConnectedCallback(ConnectedCallback cb)
+    {
+        connected_cb = cb;
+    }
+
+
 private:
     EndpointCallback endpoint_cb;
-        static esp_err_t endpointHandler(uint32_t session_id,const uint8_t *inbuf,
-                                     ssize_t inlen,uint8_t **outbuf,
-                                     ssize_t *outlen,void *priv_data);
+    ConnectedCallback connected_cb;
+    static esp_err_t endpointHandler(uint32_t session_id,const uint8_t *inbuf,
+                                    ssize_t inlen,uint8_t **outbuf,
+                                    ssize_t *outlen,void *priv_data);
 
 };
 

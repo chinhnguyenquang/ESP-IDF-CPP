@@ -5,16 +5,16 @@ namespace WIFI
 {
 
 // Wifi statics
-char                        Wifi_pro::mac_addr_cstr[]{};    
-std::mutex                  Wifi_pro::init_mutx{};   
-std::mutex                  Wifi_pro::state_mutx{};
-char                        Wifi_pro::service_name[12] = {0};       
-Wifi_pro::state_e           Wifi_pro::_state{state_e::NOT_INITIALISED};                 ///< Current WiFi state
-wifi_init_config_t          Wifi_pro::wifi_init_config = WIFI_INIT_CONFIG_DEFAULT();    ///< WiFi init config
-wifi_config_t               Wifi_pro::wifi_config{};        ///< WiFi config containing SSID & password
-wifi_prov_mgr_config_t      Wifi_pro::wifi_ble_config{};
-char                        Wifi_pro::qr_payload[100]={0};
-uint8_t                     Wifi_pro::wifipro_retries{0};
+char                                        Wifi_pro::mac_addr_cstr[]{};    
+std::mutex                                  Wifi_pro::init_mutx{};   
+std::mutex                                  Wifi_pro::state_mutx{};
+char                                        Wifi_pro::service_name[12] = {0};       
+Wifi_pro::state_e                           Wifi_pro::_state{state_e::NOT_INITIALISED};                 ///< Current WiFi state
+wifi_init_config_t                          Wifi_pro::wifi_init_config = WIFI_INIT_CONFIG_DEFAULT();    ///< WiFi init config
+wifi_config_t                               Wifi_pro::wifi_config{};        ///< WiFi config containing SSID & password
+wifi_prov_mgr_config_t                      Wifi_pro::wifi_ble_config{};
+char                                        Wifi_pro::qr_payload[100]={0};
+uint8_t                                     Wifi_pro::wifipro_retries{0};
 
 // Constructor
 Wifi_pro::Wifi_pro(void)
@@ -115,7 +115,7 @@ esp_err_t Wifi_pro::_init(void)
             ESP_LOGI("WIFI", "Creating handled event ...");
             status= esp_event_handler_register(WIFI_PROV_EVENT, ESP_EVENT_ANY_ID, &pro_event_handler, NULL);
             status |= esp_event_handler_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &wifi_event_handler, NULL);
-            status |= esp_event_handler_register(IP_EVENT, ESP_EVENT_ANY_ID, &ip_event_handler, NULL);
+            status |= esp_event_handler_register(IP_EVENT, ESP_EVENT_ANY_ID, &ip_event_handler, this);
             if (ESP_OK != status ){
                 ESP_LOGI("WIFI", "DANG KI HANDLED BI LOI ....");
                 _state=state_e::ERROR;
@@ -233,6 +233,7 @@ void Wifi_pro::wifi_event_handler(void* arg, esp_event_base_t event_base,
                 ESP_LOGW("WIFI", "%s:%d Default switch case (%" PRId32 ")", __func__, __LINE__, event_id);
                 break;
        }
+
     }
 }
 
@@ -270,6 +271,32 @@ void Wifi_pro::ip_event_handler(void* arg, esp_event_base_t event_base,
             ESP_LOGW("IP", "%s:%d Default switch case (%" PRId32 ")", __func__, __LINE__, event_id);
             break;
         }
+
+        if (IP_EVENT_STA_GOT_IP==event_id)
+        {
+            auto instance = static_cast<Wifi_pro*>(arg);
+                
+                // ✅ Kiểm tra instance trước
+            if (instance && instance->connected_cb)
+            {
+                ESP_LOGI("WIFI", "Calling connected callback");
+                instance->connected_cb();
+            }
+            else
+            {
+                // ✅ Log lý do không vào if
+                if (!instance) {
+                    ESP_LOGE("WIFI", "instance is NULL!");
+                }
+                else if (!instance->connected_cb) {
+                    ESP_LOGE("WIFI", "connected_cb is not set or empty!");
+                    ESP_LOGE("WIFI", "connected_cb address: %p", 
+                            reinterpret_cast<void*>(&instance->connected_cb));
+            }
+            }
+        }
+
+
     }
 }
 

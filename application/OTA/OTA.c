@@ -30,7 +30,7 @@
 #include <esp_image_format.h>
 #include "esp_crt_bundle.h"
 #include "OTA.h"
-#include "Certificate.h"
+
 #define ARRAYSIZE(a) (sizeof(a) / sizeof(*(a)))
 #define ALIGN( type ) __attribute__((aligned( __alignof__( type ) )))
 #define PACK( type )  __attribute__((aligned( __alignof__( type ) ), packed ))

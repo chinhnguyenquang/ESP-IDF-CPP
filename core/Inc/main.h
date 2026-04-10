@@ -9,6 +9,8 @@
 #include "SntpTime.h"
 #include "Nvs32.h"
 #include <OTA.h>
+#include "Mqtt.h"
+#include "httpClient.h"
 
 
 class Main final{
@@ -23,5 +25,10 @@ class Main final{
         WIFI::Wifi_pro Wifi;
         SNTP::Sntp& sntp;
         NVS::Nvs nvs_cfg;
+        HTTP_CLIENT::HttpClient http_client{"App.IoTVision.vn", "/api/BoardSTR423_DuLieuGuiXuongBoard"};
+        
+        std::vector<char> responseBuffer; //bien de luu tru get response tu http client (HTTP GET)
+        std::vector<char> postResponseBuffer; //bien de luu tru post response tu http client (HTTP POST)
+        bool FirstBoot{false};
     
 };

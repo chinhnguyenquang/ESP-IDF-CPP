@@ -12,6 +12,9 @@ set(EXTRA_COMPONENT_DIRS
     ${CMAKE_SOURCE_DIR}/application/Gpio
     ${CMAKE_SOURCE_DIR}/application/Nvs32
     ${CMAKE_SOURCE_DIR}/application/OTA
+    ${CMAKE_SOURCE_DIR}/application/_MQTT
+    ${CMAKE_SOURCE_DIR}/application/HTTP_CLIENT
+    
 )
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)

@@ -42,7 +42,7 @@ esp_err_t Sntp::init(void)
         sntp_setservername(1, "pool.ntp.com");
 
         sntp_set_time_sync_notification_cb(&callback_on_ntp_update);
-        sntp_set_sync_interval(/*15**/1000/**1000*/); // TODO 15 mins once testing verified working
+        sntp_set_sync_interval(15000); // TODO 15 mins once testing verified working
 
         sntp_init();
 
