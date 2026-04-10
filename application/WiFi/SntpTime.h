@@ -22,6 +22,9 @@ class Sntp final
     ~Sntp(void) { sntp_stop(); }    ///< Destructor which stops the SNTP API
 
     static void callback_on_ntp_update(timeval* tv);
+    using Tim_Sntp_Callback=std::function<void(void)>;
+    static Tim_Sntp_Callback time_sntp_callback;
+
 
 public:
 
@@ -58,6 +61,10 @@ public:
                                     (time_point_now().time_since_epoch());
     } ///< Return the current time in seconds since epoch
 
+    void set_time_callback(Tim_Sntp_Callback callback)
+    {
+        time_sntp_callback = callback;
+    } ///< Set a callback to be called when SNTP updates the time
 private:
     static std::chrono::system_clock::time_point last_update; ///< Time of the last NTP update
     static time_source_e source;    ///< SNTP API time source

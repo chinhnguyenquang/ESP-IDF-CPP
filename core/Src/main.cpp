@@ -3,7 +3,7 @@
 #include "esp_log.h"
 #define LOG_TAG "MAIN"
 
-#include "cJSON.h"
+
 
 static Main _main;
 
@@ -28,7 +28,18 @@ void Event_Connected_Handler(void)
         _main.sntp.init();
     }
 
-    xTaskCreate(&ota_update_task, "ota_update_task", 4096, NULL, 5, NULL);
+    //xTaskCreate(&ota_update_task, "ota_update_task", 4096, NULL, 5, NULL);
+}
+
+void Task_Du_Lieu(void *pvParameter)
+{
+    while (true)
+    {
+
+        _main.Wifi.RSSI_value(&_main.data_iotvision.RSSI);
+        ESP_LOGI(LOG_TAG, "Current RSSI: %d", _main.data_iotvision.RSSI);
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
 }
 
 
@@ -50,29 +61,28 @@ void Task_Get_HTTP_IotVision(void *pvParameter)
                 ESP_LOGI("HTTP", "Response: %s", _main.responseBuffer.data());
             }
 
-            ESP_LOGI(LOG_TAG, "Performing HTTP POST request to IoTVision API...");
             
-            cJSON *json = cJSON_CreateObject();
-            cJSON_AddStringToObject(json, "ID", "ABCDEF123456");
-            cJSON_AddStringToObject(json, "S", "1111177;23.5;82.9;12:26:13 12/04/2024");
-            char *message_payload = cJSON_Print(json);
 
-            //const char * json ="{\"ID\":\"ABCDEF123456\",\"S\":\"1111177;23.5;82.9;12:26:13 12/04/2024\"}";
-            _main.http_client.Post(message_payload,_main.postResponseBuffer);
- 
-            if (_main.postResponseBuffer.size() > 0) {
-            
+            char *message_payload = (char *)malloc(100);
+            char *s_output_data= (char *)malloc(64);
+            if (create_str_to_post(_main.data_iotvision, s_output_data)){
+                json_create("ABCDEF123456", s_output_data, message_payload);
+                _main.http_client.Post(message_payload,_main.postResponseBuffer);
+                if (_main.postResponseBuffer.size() > 0) {
                 _main.postResponseBuffer.push_back('\0');
-                
-                // In ra log với thẻ "HTTP"
                 ESP_LOGI("HTTP", "POST Response: %s", _main.postResponseBuffer.data());
-             }
-            cJSON_Delete(json);
+                }
+            } else {
+                ESP_LOGE(LOG_TAG, "Failed to create JSON payload");       
+            }
+            
+            free(s_output_data);
             free(message_payload);
-
         }
 
-        vTaskDelay(pdMS_TO_TICKS(5000)); 
+        
+
+        vTaskDelay(pdMS_TO_TICKS(10000)); 
     }
 }
 
@@ -104,9 +114,25 @@ extern "C" void app_main(void)
 
     _main.Wifi.setConnectedCallback(Event_Connected_Handler);
     xTaskCreatePinnedToCore(&Task_Get_HTTP_IotVision, "Task cap nhat thong tin tu IoTVision", 4096, NULL, 5, NULL,1);
-    
+    xTaskCreatePinnedToCore(&Task_Du_Lieu, "Task doc du lieu", 4096, NULL, 5, NULL,1);
+    _main.data_iotvision.K1 = 1;
+    _main.data_iotvision.K2 = 1;    
+    _main.data_iotvision.K3 = 1;
+    _main.data_iotvision.K4 = 1;
+    _main.data_iotvision.MODE = 0;
+
+    _main.sntp.set_time_callback([](){
+        ESP_LOGI(LOG_TAG, "SNTP time updated callback called");
+        memcpy(_main.data_iotvision.Time, SNTP::Sntp::ascii_time_now(), sizeof(_main.data_iotvision.Time));
+        ESP_LOGI(LOG_TAG, "Updated data_iotvision.Time to %s", _main.data_iotvision.Time);
+    });
+
+    _main.data_iotvision.Temp = 23.3;
+    _main.data_iotvision.Humi = 82.4;
+
     while(1){
        
+
 
         ESP_LOGI(LOG_TAG, "OTA1");
         vTaskDelay(pdMS_TO_TICKS(5000));

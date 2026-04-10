@@ -64,7 +64,18 @@ esp_err_t Wifi_pro::_get_mac(void)
     return status;
 }
 
+    void Wifi_pro::RSSI_value(uint8_t *rssi)
+    {
+        if(esp_wifi_sta_get_ap_info(&ap_info) == ESP_OK)
+        { 
+            int8_t rssi_real= ap_info.rssi;  
 
+            if (rssi_real > -50) *rssi =100;
+            else if (rssi_real < -70) *rssi = 0;
+            else *rssi = 2*(rssi_real + 100);
+        }
+        else *rssi = 0; 
+    }
 
 esp_err_t Wifi_pro::endpointHandler(uint32_t session_id,
                                      const uint8_t *inbuf,

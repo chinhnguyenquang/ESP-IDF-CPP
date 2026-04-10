@@ -13,6 +13,8 @@
 #include "httpClient.h"
 
 
+#include "Json.h"
+
 class Main final{
     public: 
      Main(void)
@@ -30,5 +32,7 @@ class Main final{
         std::vector<char> responseBuffer; //bien de luu tru get response tu http client (HTTP GET)
         std::vector<char> postResponseBuffer; //bien de luu tru post response tu http client (HTTP POST)
         bool FirstBoot{false};
+        //Data Json.h
+        struct Data_S_IOTVision data_iotvision; //data post du lieu tu board len server, sau khi parse tu json se duoc luu tru trong struct nay
     
 };

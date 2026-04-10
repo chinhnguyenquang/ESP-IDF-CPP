@@ -93,7 +93,8 @@ private:
                                     int32_t event_id, void* event_data);
     static void pro_event_handler(void* arg, esp_event_base_t event_base,
                                     int32_t event_id, void* event_data); ///< provision ble config
-
+    
+    wifi_ap_record_t ap_info;
 public:
     // NGUOI DUNG TU CUSTOME ENDPOINT CO THE HOAC KHONG (data,len)
     //custom endpoint cua config wifi_prov_mgr_config_t, khi co data gui den endpoint nay thi se goi callback nay, nguoi dung co the dat callback nay de xu ly data gui den endpoint nay
@@ -108,8 +109,10 @@ public:
         connected_cb = cb;
     }
 
+    void RSSI_value(uint8_t *rssi);
 
 private:
+
     EndpointCallback endpoint_cb;
     ConnectedCallback connected_cb;
     static esp_err_t endpointHandler(uint32_t session_id,const uint8_t *inbuf,
