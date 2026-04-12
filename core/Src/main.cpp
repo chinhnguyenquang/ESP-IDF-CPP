@@ -20,10 +20,7 @@ static esp_err_t initialize_system(void)
 } 
 
 
-void Data_mqtt_callback(const std::string &topicStr, const std::string &message)
-{
-    ESP_LOGI("MQTT_CALLBACK", "TOPIC %s va da ta nhan duoc la %s", topicStr.c_str(), message.c_str());
-}
+
 
 void Event_Connected_Handler(void)
 {
@@ -32,7 +29,6 @@ void Event_Connected_Handler(void)
     if (!_main.FirstBoot_to_Wifi)
     {
         status |=_main.sntp.init();
-        status |= _main._Mqtt.init();
         if (ESP_OK != status) ESP_LOGE(LOG_TAG, "System CONNECTED failed");
         _main.FirstBoot_to_Wifi = true;
     }
@@ -96,24 +92,6 @@ void Task_Get_HTTP_IotVision(void *pvParameter)
 }
 
 
-void Task_publish_mqtt(void *pvParameter)
-{
-    while (true)
-    {
-
-        if(ESP32MQTT::MQTTClient::state_e::CONNECTED == _main._Mqtt.get_state())
-        {
-            if (!_main.FirstBoot_to_Mqtt)
-            {
-                if (!_main._Mqtt.subscribe("chinh/data",Data_mqtt_callback)) ESP_LOGI(LOG_TAG,"SUB MQTT FAIL");
-                _main.FirstBoot_to_Mqtt=true;
-            }
-
-            _main._Mqtt.publish("chinh/temp", "hello world vn",0,false);
-        }
-        vTaskDelay(pdMS_TO_TICKS(1000));
-    }
-}
 
 
 
@@ -147,7 +125,7 @@ extern "C" void app_main(void)
     _main.Wifi.setConnectedCallback(Event_Connected_Handler);
     xTaskCreatePinnedToCore(&Task_Get_HTTP_IotVision, "Task cap nhat thong tin tu IoTVision", 4096, NULL, 5, NULL,1);
     xTaskCreatePinnedToCore(&Task_Du_Lieu, "Task doc du lieu", 4096, NULL, 5, NULL,1);
-    xTaskCreatePinnedToCore(&Task_publish_mqtt, "Task_publish_mqtt", 4096, NULL, 5, NULL,1);
+
 
     _main.sntp.set_time_callback([](){
         ESP_LOGI(LOG_TAG, "SNTP time updated callback called");
