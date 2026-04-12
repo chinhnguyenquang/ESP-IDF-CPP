@@ -8,5 +8,5 @@ idf_component_register(
 
     REQUIRES
         mqtt
-    
+    EMBED_FILES "isrgrootx1.pem"
 )
